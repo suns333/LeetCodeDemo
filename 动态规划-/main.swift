@@ -340,4 +340,233 @@ class 编辑距离72 {
     }
 }
 
-print(编辑距离72().minDistance_1("intention", "execution"))
+//print(编辑距离72().minDistance_1("intention", "execution"))
+
+/*
+ 516. 最长回文子序列
+ 给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度。可以假设 s 的最大长度为 1000 。
+ 
+ 
+ 
+ 示例 1:
+ 输入:
+ 
+ "bbbab"
+ 输出:
+ 
+ 4
+ 一个可能的最长回文子序列为 "bbbb"。
+ 
+ 示例 2:
+ 输入:
+ 
+ "cbbd"
+ 输出:
+ 
+ 2
+ 一个可能的最长回文子序列为 "bb"。
+ 
+ 
+ 
+ 提示：
+ 
+ 1 <= s.length <= 1000
+ s 只包含小写英文字母
+ */
+class 最长回文子序列516 {
+    func longestPalindromeSubseq(_ s: String) -> Int {
+        let count = s.count
+        if count == 0 {
+            return 0
+        }
+        
+        let s = [Character](s)
+        var dp: [[Int]] = Array(repeating: Array(repeating: 0, count: count), count: count)
+        for i in 0..<count {
+            dp[i][i] = 1
+        }
+        
+        for j in 1..<count {
+            for i in stride(from: j-1, through: 0, by: -1) {
+                if s[i] == s[j] {
+                    dp[i][j] = dp[i+1][j-1] + 2
+                }else {
+                    dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+                }
+            }
+        }
+        return dp[0][count-1]
+    }
+}
+
+//print(最长回文子序列516().longestPalindromeSubseq(""))
+
+/*
+ 1312. 让字符串成为回文串的最少插入次数
+ 给你一个字符串 s ，每一次操作你都可以在字符串的任意位置插入任意字符。
+ 
+ 请你返回让 s 成为回文串的 最少操作次数 。
+ 
+ 「回文串」是正读和反读都相同的字符串。
+ 
+ 
+ 
+ 示例 1：
+ 
+ 输入：s = "zzazz"
+ 输出：0
+ 解释：字符串 "zzazz" 已经是回文串了，所以不需要做任何插入操作。
+ 示例 2：
+ 
+ 输入：s = "mbadm"
+ 输出：2
+ 解释：字符串可变为 "mbdadbm" 或者 "mdbabdm" 。
+ 示例 3：
+ 
+ 输入：s = "leetcode"
+ 输出：5
+ 解释：插入 5 个字符后字符串变为 "leetcodocteel" 。
+ 示例 4：
+ 
+ 输入：s = "g"
+ 输出：0
+ 示例 5：
+ 
+ 输入：s = "no"
+ 输出：1
+ 
+ 
+ 提示：
+ 
+ 1 <= s.length <= 500
+ s 中所有字符都是小写字母。
+ */
+class 让字符串成为回文串的最少插入次数1312 {
+    func minInsertions(_ s: String) -> Int {
+        let s: [Character] = [Character](s)
+        let count = s.count
+        var dp: [[Int]] = Array(repeating: Array(repeating: 0, count: count), count: count)
+        for j in stride(from: 1, to: count, by: 1) {
+            for i in stride(from: j-1, through: 0, by: -1) {
+                if s[i] == s[j] {
+                    dp[i][j] = dp[i+1][j-1]
+                }else {
+                    dp[i][j] = min(dp[i+1][j], dp[i][j-1])+1
+                }
+            }
+        }
+        return dp[0][count-1]
+    }
+    
+    func minInsertions_1(_ s: String) -> Int {
+        let s: [Character] = [Character](s)
+        let count = s.count
+        var dp: [Int] = Array(repeating: 0, count: count)
+        for i in stride(from: count-2, through: 0, by: -1) {
+            var bottomLeft = 0
+            for j in i+1..<count {
+                let bottom = dp[j]
+                if s[i] == s[j] {
+                    dp[j] = bottomLeft
+                }else {
+                    dp[j] = min(dp[j], dp[j-1])+1
+                }
+                bottomLeft = bottom
+            }
+        }
+        return dp[count-1]
+    }
+}
+//print(让字符串成为回文串的最少插入次数1312().minInsertions("mbadm"))
+
+/*
+ 10. 正则表达式匹配
+ 给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+
+ '.' 匹配任意单个字符
+ '*' 匹配零个或多个前面的那一个元素
+ 所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+
+  
+ 示例 1：
+
+ 输入：s = "aa" p = "a"
+ 输出：false
+ 解释："a" 无法匹配 "aa" 整个字符串。
+ 示例 2:
+
+ 输入：s = "aa" p = "a*"
+ 输出：true
+ 解释：因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
+ 示例 3：
+
+ 输入：s = "ab" p = ".*"
+ 输出：true
+ 解释：".*" 表示可匹配零个或多个（'*'）任意字符（'.'）。
+ 示例 4：
+
+ 输入：s = "aab" p = "c*a*b"
+ 输出：true
+ 解释：因为 '*' 表示零个或多个，这里 'c' 为 0 个, 'a' 被重复一次。因此可以匹配字符串 "aab"。
+ 示例 5：
+
+ 输入：s = "mississippi" p = "mis*is*p*."
+ 输出：false
+  
+
+ 提示：
+
+ 0 <= s.length <= 20
+ 0 <= p.length <= 30
+ s 可能为空，且只包含从 a-z 的小写字母。
+ p 可能为空，且只包含从 a-z 的小写字母，以及字符 . 和 *。
+ 保证每次出现字符 * 时，前面都匹配到有效的字符
+ */
+class 正则表达式匹配10 {
+    var memo: [String: Bool] = [:]
+
+    func isMatch(_ s: String, _ p: String) -> Bool {
+        let s: [Character] = [Character](s)
+        let p: [Character] = [Character](p)
+        return dp(s, 0, p, 0)
+    }
+    // dp表示s[i..]和p[j..]是否能匹配成功
+    func dp(_ s: [Character], _ i: Int,  _ p: [Character], _ j: Int) -> Bool {
+        if j == p.count {
+            return i == s.count
+        }
+        if i == s.count {
+            if (p.count-j)%2 == 1 {
+                return false
+            }
+            for j in stride(from: j+1, to: p.count, by: 2) {
+                if p[j] != "*" {
+                    return false
+                }
+            }
+            return true
+        }
+        let cacheKey = String(i)+","+String(j)
+        if let value = memo[cacheKey] {
+            return value
+        }
+        var res = false
+        if s[i] == p[j] || p[j] == "." {
+            if j < p.count-1 && p[j+1] == "*" {
+                res = dp(s, i, p, j+2) || dp(s, i+1, p, j)
+            }else {
+                res = dp(s, i+1, p, j+1)
+            }
+        }else {
+            if j < p.count-1 && p[j+1] == "*" {
+                res = dp(s, i, p, j+2)
+            }else {
+                res = false
+            }
+        }
+        memo[cacheKey] = res
+        return res
+    }
+}
+
+print(正则表达式匹配10().isMatch("c", "..b"))
