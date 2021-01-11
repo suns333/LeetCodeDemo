@@ -1,9 +1,9 @@
 //
-//  main.swift
-//  二叉树的最大深度-104
+//  TreeNode.swift
+//  LeetCode
 //
-//  Created by ww on 2020/12/12.
-//  Copyright © 2020 周洋. All rights reserved.
+//  Created by ww on 2021/1/6.
+//  Copyright © 2021 周洋. All rights reserved.
 //
 
 import Foundation
@@ -22,13 +22,11 @@ public class TreeNode {
 }
 
 
-func maxDepth(_ root: TreeNode?) -> Int {
-    if root == nil {
-        return 0
+public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init(_ val: Int) {
+        self.val = val
+        self.next = nil
     }
-    let leftDepth = maxDepth(root?.left)
-    let rightDepth = maxDepth(root?.right)
-    return max(leftDepth, rightDepth)+1
 }
-
-

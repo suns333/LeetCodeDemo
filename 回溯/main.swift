@@ -12,7 +12,7 @@ func printSeperator(des: String) {
     print("\n-----\(des)-----\n")
 }
 
-printSeperator(des: "全排列")
+//printSeperator(des: "全排列")
 
 func 全排列helper(_ array:[Int], _ info: inout [Int], _ res: inout [[Int]]) -> Void {
     if(info.count == array.count) {
@@ -35,10 +35,12 @@ func 全排列(_ array:[Int]) -> [[Int]] {
     return res
 }
 
+
+
 //let res = 全排列([1, 2, 3])
 //print(res)
 
-printSeperator(des: "N皇后")
+//printSeperator(des: "N皇后")
 
 func isValid(_ info: inout [String], _ row: Int, _ col: Int) -> Bool {
     let n = info.count
@@ -85,9 +87,9 @@ func queenHelper(_ row : Int, _ info: inout [String], _ res: inout [[String]]) -
             continue
         }
         var str = info[row]
-
+        
         let range = str.index(str.startIndex, offsetBy: index)
-
+        
         str.replaceSubrange(range...range, with: "Q")
         
         info[row] = str
@@ -110,9 +112,9 @@ func solveNQueens(_ n: Int) -> [[String]] {
     return res
 }
 
-print(solveNQueens(4))
+//print(solveNQueens(4))
 
-printSeperator(des: "N皇后2")
+//printSeperator(des: "N皇后2")
 
 func isValid1(_ row: Int, _ col: Int) -> Bool {
     for r in 0..<row {
@@ -160,9 +162,9 @@ func solveNQueens1(_ n: Int) -> [[String]] {
     return res
 }
 
-print(solveNQueens1(8))
+//print(solveNQueens1(8))
 
-printSeperator(des: "N皇后3")
+//printSeperator(des: "N皇后3")
 
 func isValid2(_ row: Int, _ col: Int) -> Bool {
     for r in 0..<row {
@@ -232,4 +234,65 @@ func solveNQueens3(_ n: Int) -> [[String]] {
     return res2
 }
 
-print(solveNQueens3(8))
+//print(solveNQueens3(8))
+
+class _78子集 {
+    var ans: [[Int]] = [[]]
+    var perItem: [Int] = []
+    func subsets(_ nums: [Int]) -> [[Int]] {
+        subsetsHelper(nums, 0)
+        return ans
+    }
+    func subsetsHelper(_ nums: [Int], _ index: Int) -> Void {
+        for i in stride(from: index, to: nums.count, by: 1) {
+            perItem.append(nums[i])
+            ans.append(perItem)
+            subsetsHelper(nums, i+1)
+            perItem.removeLast()
+        }
+    }
+}
+//print(_78子集().subsets([1,2,3]))
+
+/*
+ 46. 全排列
+ 给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+
+ 示例:
+
+ 输入: [1,2,3]
+ 输出:
+ [
+   [1,2,3],
+   [1,3,2],
+   [2,1,3],
+   [2,3,1],
+   [3,1,2],
+   [3,2,1]
+ ]
+ */
+class 全排列46 {
+    var ans: [[Int]] = []
+    var perItem: [Int] = []
+    var used: [Int:Bool] = [:]
+    func permute(_ nums: [Int]) -> [[Int]] {
+        dfs(nums, 0)
+        return ans
+    }
+    func dfs(_ nums: [Int], _ depth: Int) -> Void {
+        if depth == nums.count {
+            ans.append(perItem)
+        }
+        for i in stride(from: 0, to: nums.count, by: 1) {
+            if used[i, default: false] == false {
+                used[i] = true
+                perItem.append(nums[i])
+                dfs(nums, depth+1)
+                perItem.removeLast()
+                used[i] = false
+            }
+        }
+    }
+}
+
+print(全排列46().permute([1,2,3]))

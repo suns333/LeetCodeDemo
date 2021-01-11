@@ -227,3 +227,49 @@ func quickSortHelper(_ array: inout [Int], _ left: Int, _ right: Int) -> Void {
 let array123: [Int] = [5, 9, 1, 9, 5, 3, 7, 6, 1]
 print("原始数组为: \(array123)")
 print(quickSort(array123))
+
+
+func heapSort(_ array: [Int]) -> [Int] {
+    var array = array
+    for i in stride(from: array.count/2-1, through: 0, by: -1) {
+        adjustHeap(&array, array.count, i)
+    }
+    for i in stride(from: array.count-1, through: 0, by: -1) {
+        array.swapAt(0, i)
+        adjustHeap(&array, i, 0)
+    }
+    return array
+}
+
+func adjustHeap(_ array: inout [Int], _ count: Int, _ index: Int) {
+    var top = index
+    let topValue = array[top]
+    var i = 2*index+1
+    while i < count {
+        if i+1<count && array[i+1]<array[i] {
+            i = i + 1
+        }
+        if topValue > array[i] {
+            array[top] = array[i]
+            top = i
+            i = 2*i+1
+        }else {
+            break;
+        }
+    }
+    array[top] = topValue
+}
+
+func findKthNumber(_ array: [Int], _ k: Int) -> Int {
+    var array = array
+    for i in stride(from: array.count/2-1, through: 0, by: -1) {
+        adjustHeap(&array, array.count, i)
+    }
+    for i in stride(from: array.count-1, to: array.count-k, by: -1) {
+        array.swapAt(0, i)
+        adjustHeap(&array, i, 0)
+    }
+    return array[0]
+}
+
+print(findKthNumber([5, 9, 1, 9, 5, 3, 7, 6, 1],8))

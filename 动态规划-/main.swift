@@ -482,40 +482,40 @@ class 让字符串成为回文串的最少插入次数1312 {
 /*
  10. 正则表达式匹配
  给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
-
+ 
  '.' 匹配任意单个字符
  '*' 匹配零个或多个前面的那一个元素
  所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
-
-  
+ 
+ 
  示例 1：
-
+ 
  输入：s = "aa" p = "a"
  输出：false
  解释："a" 无法匹配 "aa" 整个字符串。
  示例 2:
-
+ 
  输入：s = "aa" p = "a*"
  输出：true
  解释：因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
  示例 3：
-
+ 
  输入：s = "ab" p = ".*"
  输出：true
  解释：".*" 表示可匹配零个或多个（'*'）任意字符（'.'）。
  示例 4：
-
+ 
  输入：s = "aab" p = "c*a*b"
  输出：true
  解释：因为 '*' 表示零个或多个，这里 'c' 为 0 个, 'a' 被重复一次。因此可以匹配字符串 "aab"。
  示例 5：
-
+ 
  输入：s = "mississippi" p = "mis*is*p*."
  输出：false
-  
-
+ 
+ 
  提示：
-
+ 
  0 <= s.length <= 20
  0 <= p.length <= 30
  s 可能为空，且只包含从 a-z 的小写字母。
@@ -524,7 +524,7 @@ class 让字符串成为回文串的最少插入次数1312 {
  */
 class 正则表达式匹配10 {
     var memo: [String: Bool] = [:]
-
+    
     func isMatch(_ s: String, _ p: String) -> Bool {
         let s: [Character] = [Character](s)
         let p: [Character] = [Character](p)
@@ -569,4 +569,584 @@ class 正则表达式匹配10 {
     }
 }
 
-print(正则表达式匹配10().isMatch("c", "..b"))
+//print(正则表达式匹配10().isMatch("c", "..b"))
+
+/*
+ 4键键盘
+ */
+class 四键键盘 {
+    func maxA(_ N: Int) -> Int {
+        var dp: [Int] = Array(repeating: 0, count: N+1)
+        dp[0] = 0
+        for i in stride(from: 1, through: N, by: 1) {
+            dp[i] = dp[i-1] + 1
+            for j in stride(from: 2, through: i, by: 1) {
+                dp[i] = max(dp[i], dp[j-2]*(i-j+1))
+            }
+        }
+        return dp[N]
+    }
+}
+
+//print(四键键盘().maxA(9))
+
+/*
+ 887. 鸡蛋掉落
+ 你将获得 K 个鸡蛋，并可以使用一栋从 1 到 N  共有 N 层楼的建筑。
+ 
+ 每个蛋的功能都是一样的，如果一个蛋碎了，你就不能再把它掉下去。
+ 
+ 你知道存在楼层 F ，满足 0 <= F <= N 任何从高于 F 的楼层落下的鸡蛋都会碎，从 F 楼层或比它低的楼层落下的鸡蛋都不会破。
+ 
+ 每次移动，你可以取一个鸡蛋（如果你有完整的鸡蛋）并把它从任一楼层 X 扔下（满足 1 <= X <= N）。
+ 
+ 你的目标是确切地知道 F 的值是多少。
+ 
+ 无论 F 的初始值如何，你确定 F 的值的最小移动次数是多少？
+ 
+ 
+ 
+ 示例 1：
+ 
+ 输入：K = 1, N = 2
+ 输出：2
+ 解释：
+ 鸡蛋从 1 楼掉落。如果它碎了，我们肯定知道 F = 0 。
+ 否则，鸡蛋从 2 楼掉落。如果它碎了，我们肯定知道 F = 1 。
+ 如果它没碎，那么我们肯定知道 F = 2 。
+ 因此，在最坏的情况下我们需要移动 2 次以确定 F 是多少。
+ 示例 2：
+ 
+ 输入：K = 2, N = 6
+ 输出：3
+ 示例 3：
+ 
+ 输入：K = 3, N = 14
+ 输出：4
+ 
+ 
+ 提示：
+ 
+ 1 <= K <= 100
+ 1 <= N <= 10000
+ */
+class 鸡蛋掉落887 {
+    var mem: [String:Int] = [:]
+    func superEggDrop(_ K: Int, _ N: Int) -> Int {
+        return dp(K, N)
+    }
+    
+    func dp(_ K: Int, _ N: Int) -> Int {
+        if K == 1 {
+            return N
+        }
+        if N == 0 {
+            return 0
+        }
+        let key = String(K)+","+String(N)
+        if let res = mem[key] {
+            return res
+        }
+        var res = Int.max
+        for i in 1...N {
+            res = min(res, max(dp(K, N-i), dp(K-1, i-1))+1)
+        }
+        mem[key] = res
+        return res
+    }
+    
+    func dp1(_ K: Int, _ N: Int) -> Int {
+        if K == 1 {
+            return N
+        }
+        if N == 0 {
+            return 0
+        }
+        let key = String(K)+","+String(N)
+        if let res = mem[key] {
+            return res
+        }
+        var res = Int.max
+        var lo = 1, hi = N
+        while lo<=hi {
+            let mid = lo+(hi-lo)/2
+            let broken = dp1(K-1, mid-1)
+            let not_broken = dp1(K, N-mid)
+            if broken > not_broken {
+                hi = mid - 1
+                res = min(res, broken+1)
+            }else {
+                lo = mid + 1
+                res = min(res, not_broken+1)
+            }
+        }
+        mem[key] = res
+        return res
+    }
+    
+    // 解法2
+    func superEggDrop1(_ K: Int, _ N: Int) -> Int {
+        var dp: [[Int]] = Array(repeating: Array(repeating: 0, count: N+1), count: K+1)
+        var m = 0
+        while dp[K][m] < N {
+            m += 1
+            for i in 1...K {
+                dp[i][m] = dp[i][m-1] + dp[i-1][m-1] + 1
+            }
+        }
+        return m
+    }
+}
+
+//print(鸡蛋掉落887().superEggDrop1(1, 2))
+
+/*
+ 312. 戳气球
+ 有 n 个气球，编号为0 到 n-1，每个气球上都标有一个数字，这些数字存在数组 nums 中。
+ 
+ 现在要求你戳破所有的气球。如果你戳破气球 i ，就可以获得 nums[left] * nums[i] * nums[right] 个硬币。 这里的 left 和 right 代表和 i 相邻的两个气球的序号。注意当你戳破了气球 i 后，气球 left 和气球 right 就变成了相邻的气球。
+ 
+ 求所能获得硬币的最大数量。
+ 
+ 说明:
+ 
+ 你可以假设 nums[-1] = nums[n] = 1，但注意它们不是真实存在的所以并不能被戳破。
+ 0 ≤ n ≤ 500, 0 ≤ nums[i] ≤ 100
+ 示例:
+ 
+ 输入: [3,1,5,8]
+ 输出: 167
+ 解释: nums = [3,1,5,8] --> [3,5,8] -->   [3,8]   -->  [8]  --> []
+ coins =  3*1*5      +  3*5*8    +  1*3*8      + 1*8*1   = 167
+ */
+class 戳气球312 {
+    var res = Int.min
+    func maxCoins(_ nums: [Int]) -> Int {
+        var nums = nums
+        backtrace(&nums, 0)
+        return res
+    }
+    
+    func backtrace(_ nums:inout [Int], _ score: Int) {
+        if nums.count == 2 {
+            res = max(res, score)
+            return
+        }
+        for i in 1..<nums.count-1 {
+            let point = nums[i-1]*nums[i]*nums[i+1]
+            let valueI = nums[i]
+            nums.remove(at: i)
+            backtrace(&nums, score + point)
+            nums.insert(valueI, at: i)
+        }
+    }
+    
+    func maxCoins1(_ nums: [Int]) -> Int {
+        let n = nums.count
+        var points: [Int] = [Int](repeating: 0, count: n+2)
+        points[0] = 1
+        for i in 0..<n {
+            points[i+1] = nums[i]
+        }
+        points[n+1] = 1
+        
+        var dp: [[Int]] = Array(repeating: Array(repeating: 0, count: n+2), count: n+2)
+        for i in stride(from: n, through: 0, by: -1) {
+            for j in stride(from: i+1, to: n+2, by: 1) {
+                for k in stride(from: i+1, to: j, by: 1) {
+                    dp[i][j] = max(dp[i][j], dp[i][k] + dp[k][j] + points[i]*points[k]*points[j])
+                }
+            }
+        }
+        return dp[0][n+1]
+    }
+}
+//print(戳气球312().maxCoins1([3,1,5,8]))
+
+/*
+ 01背包问题
+ 可装载重量为W的背包，N个物品，对应的重量为数组wt，价值为数组val，最多可以装的价值是多少
+ */
+class _01背包问题 {
+    func knapsack(_ W: Int, _ N: Int, _ wt: [Int], _ val: [Int]) -> Int {
+        // dp[i][w]表示前i个物品放到容量为w的背包中最大的价值
+        var dp = Array(repeating: [Int](repeating: 0, count: W+1), count: N+1)
+        for i in 1...N {
+            for w in 1...W {
+                if wt[i-1] > w {
+                    dp[i][w] = dp[i-1][w]
+                }else {
+                    dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i-1]]+val[i-1])
+                }
+            }
+        }
+        return dp[N][W]
+    }
+}
+//print(_01背包问题().knapsack(4, 3, [2,1,3], [4,2,3]))
+
+/*
+ 子集背包问题
+ 一个非空数组nums，判断是否可以分割为两个子集，这两个子集的元素之和相等
+ */
+class 子集背包问题 {
+    func canPartition(_ nums: [Int]) -> Bool {
+        let count = nums.count
+        var sum = 0
+        for num in nums {
+            sum += num
+        }
+        if sum%2 == 1 {
+            return false
+        }
+        sum = sum/2
+        //dp[i][j]表示前i个物品能否装满容量为j的背包
+        var dp = Array(repeating: Array(repeating: false, count: sum+1), count: count+1)
+        for i in 0...count {
+            dp[i][0] = true
+        }
+        for i in 1...count {
+            for j in 1...sum {
+                if nums[i-1]>j {
+                    dp[i][j] = dp[i-1][j]
+                }else {
+                    dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i-1]]
+                }
+            }
+        }
+        return dp[count][sum]
+    }
+}
+//print(子集背包问题().canPartition([1,5,12,5]))
+
+/*
+ 518. 零钱兑换 II
+ 给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。
+ 
+ 
+ 
+ 示例 1:
+ 
+ 输入: amount = 5, coins = [1, 2, 5]
+ 输出: 4
+ 解释: 有四种方式可以凑成总金额:
+ 5=5
+ 5=2+2+1
+ 5=2+1+1+1
+ 5=1+1+1+1+1
+ 示例 2:
+ 
+ 输入: amount = 3, coins = [2]
+ 输出: 0
+ 解释: 只用面额2的硬币不能凑成总金额3。
+ 示例 3:
+ 
+ 输入: amount = 10, coins = [10]
+ 输出: 1
+ 
+ 
+ 注意:
+ 
+ 你可以假设：
+ 
+ 0 <= amount (总金额) <= 5000
+ 1 <= coin (硬币面额) <= 5000
+ 硬币种类不超过 500 种
+ 结果符合 32 位符号整数
+ */
+class 零钱兑换II518 {
+    func change(_ amount: Int, _ coins: [Int]) -> Int {
+        let count = coins.count
+        //dp[i][j]表示用前i个硬币可以凑成j零钱的方式有几种
+        var dp: [[Int]] = Array(repeating: Array(repeating: 0, count: amount+1), count: count+1)
+        for i in 0...coins.count {
+            dp[i][0] = 1
+        }
+        for i in 1...count {
+            for j in 1...amount {
+                if coins[i-1] <= j {
+                    dp[i][j] = dp[i-1][j] + dp[i-1][j-coins[i-1]]
+                }else {
+                    dp[i][j] = dp[i-1][j]
+                }
+            }
+        }
+        return dp[count][amount]
+    }
+    func change1(_ amount: Int, _ coins: [Int]) -> Int {
+        let count = coins.count
+        //dp[j]表示用前i个硬币可以凑成j价值的零钱的方式
+        var dp: [Int] = Array(repeating: 0, count: amount+1)
+        dp[0] = 1
+        for i in stride(from: 1, through: count, by: 1) {
+            for j in stride(from: 1, through: amount, by: 1) {
+                if coins[i-1] <= j {
+                    dp[j] = dp[j] + dp[j-coins[i-1]]
+                }
+            }
+        }
+        return dp[amount]
+    }
+}
+
+/*
+ 198. 打家劫舍
+ 你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+ 
+ 给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+ 
+ 
+ 
+ 示例 1：
+ 
+ 输入：[1,2,3,1]
+ 输出：4
+ 解释：偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+ 偷窃到的最高金额 = 1 + 3 = 4 。
+ 示例 2：
+ 
+ 输入：[2,7,9,3,1]
+ 输出：12
+ 解释：偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+ 偷窃到的最高金额 = 2 + 9 + 1 = 12 。
+ 
+ 
+ 提示：
+ 
+ 0 <= nums.length <= 100
+ 0 <= nums[i] <= 400
+ */
+class 打家劫舍198 {
+    func rob(_ nums: [Int]) -> Int {
+        let count = nums.count
+        
+        var dpi_2 = 0
+        var dpi_1 = 0
+        var ans = 0
+        
+        for i in stride(from: count-1, through: 0, by: -1) {
+            ans = max(dpi_1, dpi_2+nums[i])
+            dpi_2 = dpi_1
+            dpi_1 = ans
+        }
+        return ans
+    }
+}
+//print(打家劫舍198().rob([2,7,9,3,1]))
+
+/*
+ 213. 打家劫舍 II
+ 你是一个专业的小偷，计划偷窃沿街的房屋，每间房内都藏有一定的现金。这个地方所有的房屋都 围成一圈 ，这意味着第一个房屋和最后一个房屋是紧挨着的。同时，相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警 。
+ 
+ 给定一个代表每个房屋存放金额的非负整数数组，计算你 在不触动警报装置的情况下 ，能够偷窃到的最高金额。
+ 
+ 
+ 
+ 示例 1：
+ 
+ 输入：nums = [2,3,2]
+ 输出：3
+ 解释：你不能先偷窃 1 号房屋（金额 = 2），然后偷窃 3 号房屋（金额 = 2）, 因为他们是相邻的。
+ 示例 2：
+ 
+ 输入：nums = [1,2,3,1]
+ 输出：4
+ 解释：你可以先偷窃 1 号房屋（金额 = 1），然后偷窃 3 号房屋（金额 = 3）。
+ 偷窃到的最高金额 = 1 + 3 = 4 。
+ 示例 3：
+ 
+ 输入：nums = [0]
+ 输出：0
+ 
+ 
+ 提示：
+ 
+ 1 <= nums.length <= 100
+ 0 <= nums[i] <= 1000
+ */
+class 打家劫舍II213 {
+    func rob(_ nums: [Int]) -> Int {
+        let count = nums.count
+        if count == 1 {
+            return nums[0]
+        }
+        return max(robRange(nums, 0, count-2), robRange(nums, 1, count-1))
+    }
+    
+    func robRange(_ nums: [Int], _ start: Int, _ end: Int) -> Int {
+        var dp_i = 0
+        var dp_i_1 = 0, dp_i_2 = 0
+        for i in stride(from: end, through: start, by: -1) {
+            dp_i = max(dp_i_1, dp_i_2+nums[i])
+            dp_i_2 = dp_i_1
+            dp_i_1 = dp_i
+        }
+        return dp_i
+    }
+}
+
+/*
+ 337. 打家劫舍 III
+ 在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。
+ 
+ 计算在不触动警报的情况下，小偷一晚能够盗取的最高金额。
+ 
+ 示例 1:
+ 
+ 输入: [3,2,3,null,3,null,1]
+ 
+ 3
+ / \
+ 2   3
+ \   \
+ 3   1
+ 
+ 输出: 7
+ 解释: 小偷一晚能够盗取的最高金额 = 3 + 3 + 1 = 7.
+ 示例 2:
+ 
+ 输入: [3,4,5,1,3,null,1]
+ 
+ 3
+ / \
+ 4   5
+ / \   \
+ 1   3   1
+ 
+ 输出: 9
+ 解释: 小偷一晚能够盗取的最高金额 = 4 + 5 = 9.
+ */
+
+extension TreeNode: Hashable {
+    public static func == (lhs: TreeNode, rhs: TreeNode) -> Bool {
+        return lhs === rhs
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(val)
+    }
+}
+
+class Solution {
+    var mem: [TreeNode: Int] = [:]
+    
+    func rob(_ root: TreeNode?) -> Int {
+        if root == nil {
+            return 0
+        }
+        if let value = mem[root!] {
+            return value
+        }
+        let do_rob = root!.val +
+            (root?.left == nil ? 0 : (rob(root?.left?.left) + rob(root?.left?.right))) +
+            (root?.right == nil ? 0 : (rob(root?.right?.left) + rob(root?.right?.right)))
+        let not_rob = rob(root?.left) + rob(root?.right)
+        mem[root!] = max(do_rob, not_rob)
+        return mem[root!]!
+    }
+}
+
+/*
+ 494. 目标和
+ 给定一个非负整数数组，a1, a2, ..., an, 和一个目标数，S。现在你有两个符号 + 和 -。对于数组中的任意一个整数，你都可以从 + 或 -中选择一个符号添加在前面。
+
+ 返回可以使最终数组和为目标数 S 的所有添加符号的方法数。
+
+  
+
+ 示例：
+
+ 输入：nums: [1, 1, 1, 1, 1], S: 3
+ 输出：5
+ 解释：
+
+ -1+1+1+1+1 = 3
+ +1-1+1+1+1 = 3
+ +1+1-1+1+1 = 3
+ +1+1+1-1+1 = 3
+ +1+1+1+1-1 = 3
+
+ 一共有5种方法让最终目标和为3。
+  
+
+ 提示：
+
+ 数组非空，且长度不会超过 20 。
+ 初始的数组的和不会超过 1000 。
+ 保证返回的最终结果能被 32 位整数存下。
+ */
+class 目标和494 {
+    var mem: [String : Int] = [:]
+    
+    func findTargetSumWays(_ nums: [Int], _ S: Int) -> Int {
+        return dfs(nums, 0, S)
+    }
+    
+    func dfs(_ nums: [Int], _ index: Int, _ S: Int) -> Int {
+        let count = nums.count
+        
+        let key = String(S) + "," + String(index)
+        
+        if let value = mem[key] {
+            return value
+        }
+        
+        if index == count {
+            if S == 0 {
+                return 1
+            }
+            return 0
+        }
+
+        let ans = dfs(nums, index+1, S+nums[index]) + dfs(nums, index+1, S-nums[index])
+        mem[key] = ans
+        return ans
+    }
+    
+    func findTargetSumWays1(_ nums: [Int], _ S: Int) -> Int {
+        var sum = 0
+        for item in nums {
+            sum += item
+        }
+    
+        if sum < S || (sum+S)%2==1 {
+            return 0
+        }
+        return subsets1(nums, (sum+S)/2)
+    }
+    
+    func subsets(_ nums: [Int], _ target: Int) -> Int {
+        let count = nums.count
+        // dp[i][j]表示用前i个元素凑成target有几种方式
+        // dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i-1]]
+        var dp: [[Int]] = Array(repeating: Array(repeating: 0, count: target+1), count: count+1)
+        dp[0][0] = 1
+        for i in 1...count {
+            for j in 0...target {
+                if nums[i-1]>j {
+                    dp[i][j] = dp[i-1][j]
+                }else {
+                    dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i-1]]
+                }
+            }
+        }
+        return dp[count][target]
+    }
+    
+    func subsets1(_ nums: [Int], _ target: Int) -> Int {
+        let count = nums.count
+        var dp: [Int] = Array(repeating: 0, count: target+1)
+        dp[0] = 1
+        for i in 1...count {
+            for j in stride(from: target, through: 0, by: -1) {
+                if nums[i-1]>j {
+                    dp[j] = dp[j]
+                }else {
+                    dp[j] = dp[j] + dp[j-nums[i-1]]
+                }
+            }
+        }
+        return dp[target]
+    }
+}
+print(目标和494().findTargetSumWays1([0], 0))
