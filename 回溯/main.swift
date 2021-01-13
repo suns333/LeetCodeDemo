@@ -8,12 +8,6 @@
 
 import Foundation
 
-func printSeperator(des: String) {
-    print("\n-----\(des)-----\n")
-}
-
-//printSeperator(des: "全排列")
-
 func 全排列helper(_ array:[Int], _ info: inout [Int], _ res: inout [[Int]]) -> Void {
     if(info.count == array.count) {
         res.append(info)
@@ -237,16 +231,16 @@ func solveNQueens3(_ n: Int) -> [[String]] {
 //print(solveNQueens3(8))
 
 class _78子集 {
-    var ans: [[Int]] = [[]]
+    var ans: [[Int]] = []
     var perItem: [Int] = []
     func subsets(_ nums: [Int]) -> [[Int]] {
         subsetsHelper(nums, 0)
         return ans
     }
     func subsetsHelper(_ nums: [Int], _ index: Int) -> Void {
+        ans.append(perItem)
         for i in stride(from: index, to: nums.count, by: 1) {
             perItem.append(nums[i])
-            ans.append(perItem)
             subsetsHelper(nums, i+1)
             perItem.removeLast()
         }
@@ -274,25 +268,115 @@ class _78子集 {
 class 全排列46 {
     var ans: [[Int]] = []
     var perItem: [Int] = []
-    var used: [Int:Bool] = [:]
     func permute(_ nums: [Int]) -> [[Int]] {
-        dfs(nums, 0)
+        dfs(nums)
         return ans
     }
-    func dfs(_ nums: [Int], _ depth: Int) -> Void {
-        if depth == nums.count {
+    func dfs(_ nums: [Int]) -> Void {
+        let count = nums.count
+        if perItem.count == count {
             ans.append(perItem)
+            return
         }
-        for i in stride(from: 0, to: nums.count, by: 1) {
-            if used[i, default: false] == false {
-                used[i] = true
-                perItem.append(nums[i])
-                dfs(nums, depth+1)
-                perItem.removeLast()
-                used[i] = false
+        for i in 0..<count {
+            if perItem.contains(nums[i]) {
+                continue
             }
+            perItem.append(nums[i])
+            dfs(nums)
+            perItem.removeLast()
         }
     }
+    
 }
 
 print(全排列46().permute([1,2,3]))
+/*
+ 77. 组合
+ 给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。
+
+ 示例:
+
+ 输入: n = 4, k = 2
+ 输出:
+ [
+   [2,4],
+   [3,4],
+   [2,3],
+   [1,2],
+   [1,3],
+   [1,4],
+ ]
+ */
+class 组合77 {
+    var ans: [[Int]] = []
+    var perItem: [Int] = []
+    func combine(_ n: Int, _ k: Int) -> [[Int]] {
+        combineHelper(n, 1, k)
+        return ans
+    }
+    
+    func combineHelper(_ n: Int, _ index: Int, _ k: Int) -> Void {
+        if perItem.count == k {
+            ans.append(perItem)
+        }
+        for i in stride(from: index, through: n, by: 1) {
+            perItem.append(i)
+            combineHelper(n, i+1, k)
+            perItem.removeLast()
+        }
+    }
+}
+//print(组合77().combine(4, 2))
+
+/*
+ 37. 解数独
+ 编写一个程序，通过填充空格来解决数独问题。
+
+ 一个数独的解法需遵循如下规则：
+
+ 数字 1-9 在每一行只能出现一次。
+ 数字 1-9 在每一列只能出现一次。
+ 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+ 空白格用 '.' 表示。
+ */
+class 解数独37 {
+    func solveSudoku(_ board: inout [[Character]]) {
+        sudokuHelper(&board, 0, 0)
+    }
+    
+    func sudokuHelper(_ board: inout [[Character]], _ i: Int, _ j: Int) -> Bool {
+        if j == 9 {
+            return sudokuHelper(&board, i+1, 0)
+        }
+        if i == 9 {
+            return true
+        }
+        if board[i][j] != "." {
+            return sudokuHelper(&board, i, j+1);
+        }
+        for index in 1...9 {
+            let char = Character.init(String(index))
+            if isValid(board, i, j, char) {
+                board[i][j] = char
+                if sudokuHelper(&board, i, j+1) {
+                    return true
+                }
+                board[i][j] = "."
+            }
+        }
+        return false
+    }
+    
+    func isValid(_ board: [[Character]], _ i: Int, _ j: Int, _ c: Character) -> Bool {
+        for n in 0..<9 {
+            if board[i][n] == c || board[n][j] == c {
+                return false
+            }
+            if board[i/3*3+n/3][j/3*3+n%3] == c{
+                return false
+            }
+        }
+        return true
+    }
+}
