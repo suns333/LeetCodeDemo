@@ -295,3 +295,41 @@ class 二叉树的最近公共祖先 {
         }
     }
 }
+
+
+/*
+ 函数调用栈。 N叉树的后续遍历
+ */
+class NNode {
+    var val: Int
+    var nodes:[NNode]
+    init(_ val: Int) {
+        self.val = val
+        self.nodes = [NNode]()
+    }
+}
+
+func haha(_ nums: [Int], _ index: Int) -> NNode {
+    var nums = nums;
+    nums.insert(nums[0] - 1, at: 0)
+    return hahaHelper(nums, 0)
+}
+
+func hahaHelper(_ nums: [Int], _ index: Int) -> NNode {
+    let node = NNode.init(nums[index])
+    
+    if index == nums.count - 1 || nums[index] >= nums[index+1] {
+        return node
+    }
+    for i in index+1..<nums.count {
+        if nums[i] == nums[index]+1 {
+            node.nodes.insert(hahaHelper(nums, i), at: 0)
+        }else if nums[i] == nums[index] {
+            break
+        }
+    }
+    return node
+}
+
+let node = haha([0, 1, 1, 2, 1, 2, 3, 4, 0, 0], 0)
+print(node)

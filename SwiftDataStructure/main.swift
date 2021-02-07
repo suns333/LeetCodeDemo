@@ -170,3 +170,8 @@ let ans = arrays.map({
 }) 
 print(ans)
 
+let char = Character.init(String(1))
+print(char.asciiValue!-Character("0").asciiValue!)
+
+
+

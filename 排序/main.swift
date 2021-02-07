@@ -30,9 +30,9 @@ let array = [4,0,1,3,2]
 //    print(array[i])
 //}
 
-for i in stride(from:4, to: 1, by: -1) {
-    print(array[i])
-}
+//for i in stride(from:4, to: 1, by: -1) {
+//    print(array[i])
+//}
 // 插入排序
 //insertSort(array: array)
 
@@ -107,13 +107,30 @@ func shellSort(array:[Int]) -> Void {
     }
 }
 
+func shellSort1(_ nums: [Int]) {
+    let n = nums.count
+    var nums = nums;
+    var shellValue = n/3+1
+    while shellValue >= 1 {
+        for i in shellValue..<n {
+            let insertValue = nums[i]
+            var j = i - shellValue
+            while j >= 0 && nums[j] > insertValue {
+                nums[j+shellValue] = nums[j]
+                j -= shellValue
+            }
+            nums[j+shellValue] = insertValue
+        }
+        shellValue -= 1
+    }
+    print(nums)
+}
+
 let shellArray = [10, 8, 7, 1, 4, 5]
-shellSort(array: shellArray)
+//shellSort1(shellArray)
 
 
 // MARK: 归并排序
-
-
 
 func mergeSort(_ array: [Int]) -> [Int] {
     var array = array
@@ -156,12 +173,12 @@ func mergeSortHelper(_ array: inout [Int], _ low: Int, _ high: Int){
     }
 }
 
-print(mergeSort([-4,2,1,3,5,2,9,8]))
+//print(mergeSort([-4,2,1,3,5,2,9,8]))
 
 // MARK: 快速排序
 
 
-print("----快速排序----")
+//print("----快速排序----")
 func quickSort(_ array: [Int]) -> [Int] {
     var array = array
     quickSortHelper(&array, 0, array.count-1)
@@ -221,13 +238,51 @@ func quickSortHelper(_ array: inout [Int], _ left: Int, _ right: Int) -> Void {
     quickSortHelper(&array, mid+1, right)
 }
 
+class QuickSort {
+    func sort(_ nums: inout [Int]) -> Void {
+        sortHelper(&nums, 0, nums.count-1)
+    }
+    
+    func sortHelper(_ nums: inout [Int], _ l: Int, _ h: Int) -> Void {
+        guard l < h else {
+            return
+        }
+        let mid = partition(nums, l, h)
+        sortHelper(&nums, l, mid-1)
+        sortHelper(&nums, mid+1, h)
+    }
+    
+    func partition(_ nums: inout [Int], _ l: Int, _ h: Int) -> Int {
+        let privot = nums[l]
+        var i = l
+        var j = h
+        while i < j {
+            while i < j && nums[j] >= privot {
+                j -= 1
+            }
+            if i < j {
+                nums[i] = nums[j]
+                i += 1
+            }
+            while i < j && nums[i] <= privot {
+                i += 1
+            }
+            if i < j {
+                nums[j] = nums[i]
+                j -= 1
+            }
+        }
+        nums[i] = privot
+        return i
+    }
+}
 
 
+//let array123: [Int] = [5, 9, 1, 9, 5, 3, 7, 6, 1]
+//print("原始数组为: \(array123)")
+//print(quickSort(array123))
 
-let array123: [Int] = [5, 9, 1, 9, 5, 3, 7, 6, 1]
-print("原始数组为: \(array123)")
-print(quickSort(array123))
-
+[5, 1, 1, 3, 4, 6, 9, 7, 6, 9]
 
 func heapSort(_ array: [Int]) -> [Int] {
     var array = array
@@ -272,4 +327,4 @@ func findKthNumber(_ array: [Int], _ k: Int) -> Int {
     return array[0]
 }
 
-print(findKthNumber([5, 9, 1, 9, 5, 3, 7, 6, 1],8))
+//print(findKthNumber([5, 9, 1, 9, 5, 3, 7, 6, 1],8))

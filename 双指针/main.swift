@@ -598,7 +598,7 @@ func findKthInSortedArrays(_ nums1: [Int], _ nums2: [Int], _ k: Int) -> Int {
 }
 
 
-print(findMedianSortedArrays([1,2], [3,4]))
+//print(findMedianSortedArrays([1,2], [3,4]))
 
 
 func findMedianSortedArrays1(_ nums1: [Int], _ nums2: [Int]) -> Double {
@@ -641,5 +641,152 @@ func getKthNumber(_ nums1: [Int], _ start1: Int, _ end1: Int, _ nums2: [Int],  _
     }else{
         //偏移nums1的start，相当于去除之前的元素，同时k值更新，减去去除的元素个数
         return getKthNumber(nums1, i+1, end1, nums2, start2, end2, k - (i - start1 + 1))
+    }
+}
+/*
+ 42. 接雨水
+ 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+ 
+ 
+ 
+ 示例 1：
+ 
+ 
+ 
+ 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+ 输出：6
+ 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+ 示例 2：
+ 
+ 输入：height = [4,2,0,3,2,5]
+ 输出：9
+ */
+class 接雨水42 {
+    func trap(_ height: [Int]) -> Int {
+        var leftMax = Int.min
+        var rightMax = Int.min
+        var left = 0, right = height.count-1
+        var res = 0
+        while left < right {
+            leftMax = max(leftMax, height[left])
+            rightMax = max(rightMax, height[right])
+            if leftMax < rightMax {
+                res += leftMax - height[left]
+                left += 1
+            }else {
+                res += rightMax - height[right]
+                right -= 1
+            }
+        }
+        return res
+    }
+}
+
+//print(接雨水42().trap([4,2,0,3,2,5]))
+
+/*
+ 875. 爱吃香蕉的珂珂
+ 珂珂喜欢吃香蕉。这里有 N 堆香蕉，第 i 堆中有 piles[i] 根香蕉。警卫已经离开了，将在 H 小时后回来。
+ 
+ 珂珂可以决定她吃香蕉的速度 K （单位：根/小时）。每个小时，她将会选择一堆香蕉，从中吃掉 K 根。如果这堆香蕉少于 K 根，她将吃掉这堆的所有香蕉，然后这一小时内不会再吃更多的香蕉。
+ 
+ 珂珂喜欢慢慢吃，但仍然想在警卫回来前吃掉所有的香蕉。
+ 
+ 返回她可以在 H 小时内吃掉所有香蕉的最小速度 K（K 为整数）。
+ 
+ 
+ 
+ 示例 1：
+ 
+ 输入: piles = [3,6,7,11], H = 8
+ 输出: 4
+ 示例 2：
+ 
+ 输入: piles = [30,11,23,4,20], H = 5
+ 输出: 30
+ 示例 3：
+ 
+ 输入: piles = [30,11,23,4,20], H = 6
+ 输出: 23
+ 
+ 
+ 提示：
+ 
+ 1 <= piles.length <= 10^4
+ piles.length <= H <= 10^9
+ 1 <= piles[i] <= 10^9
+ */
+class 爱吃香蕉的珂珂875 {
+    func minEatingSpeed(_ piles: [Int], _ H: Int) -> Int {
+        var left = 1
+        var right = piles.max()!
+        while left <= right {
+            let mid = left + (right - left)/2
+            let time = getTime(piles, mid)
+            if time == H {
+                right = mid-1
+            }else if time < H {
+                right = mid-1
+            }else if time > H{
+                left = mid + 1
+            }
+        }
+        
+        return left;
+    }
+    
+    func getTime(_ piles: [Int], _ speed: Int) -> Int {
+        var res = 0
+        for item in piles {
+            res += (item+speed-1)/speed
+        }
+        return res
+    }
+}
+
+print(爱吃香蕉的珂珂875().minEatingSpeed([30,11,23,4,20], 6))
+
+func findTarget(_ nums: [Int], _ target: Int) -> Int {
+    let count = nums.count
+    var left = 0
+    var right = count-1
+    while left<=right {
+        let mid = left+(right-left)/2
+        if nums[mid] > nums[mid+1]  {
+            if nums[mid] < target {
+                
+            }
+            right = mid-1
+        }else if nums[mid] > target && nums[mid] < nums[mid-1] {
+            left = mid+1
+        }else {
+            
+        }
+    }
+}
+
+class Solution {
+    func search(_ nums: [Int], _ target: Int) -> Int {
+        var left = 0, right = nums.count - 1
+        while left <= right {
+            let mid = left + (right - left)>>1
+            if nums[mid] == target {
+                return mid
+            }
+            if nums[mid] >= nums[left] {
+                if target >= nums[left] && nums[mid] > target {
+                    right = mid-1
+                }else {
+                    left = mid+1
+                }
+            }else {
+                if target <= nums[right] && nums[mid] < target {
+                    left = mid+1
+                }else {
+                    right = right-1
+                }
+            }
+        }
+        return -1
     }
 }

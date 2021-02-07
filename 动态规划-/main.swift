@@ -1049,28 +1049,28 @@ class Solution {
 /*
  494. 目标和
  给定一个非负整数数组，a1, a2, ..., an, 和一个目标数，S。现在你有两个符号 + 和 -。对于数组中的任意一个整数，你都可以从 + 或 -中选择一个符号添加在前面。
-
+ 
  返回可以使最终数组和为目标数 S 的所有添加符号的方法数。
-
-  
-
+ 
+ 
+ 
  示例：
-
+ 
  输入：nums: [1, 1, 1, 1, 1], S: 3
  输出：5
  解释：
-
+ 
  -1+1+1+1+1 = 3
  +1-1+1+1+1 = 3
  +1+1-1+1+1 = 3
  +1+1+1-1+1 = 3
  +1+1+1+1-1 = 3
-
+ 
  一共有5种方法让最终目标和为3。
-  
-
+ 
+ 
  提示：
-
+ 
  数组非空，且长度不会超过 20 。
  初始的数组的和不会超过 1000 。
  保证返回的最终结果能被 32 位整数存下。
@@ -1097,7 +1097,7 @@ class 目标和494 {
             }
             return 0
         }
-
+        
         let ans = dfs(nums, index+1, S+nums[index]) + dfs(nums, index+1, S-nums[index])
         mem[key] = ans
         return ans
@@ -1108,7 +1108,7 @@ class 目标和494 {
         for item in nums {
             sum += item
         }
-    
+        
         if sum < S || (sum+S)%2==1 {
             return 0
         }
@@ -1149,4 +1149,256 @@ class 目标和494 {
         return dp[target]
     }
 }
-print(目标和494().findTargetSumWays1([0], 0))
+//print(目标和494().findTargetSumWays1([0], 0))
+
+/*
+ 1. 两数之和
+ */
+class 两数之和1 {
+    func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+        var map: [Int : Int] = [:]
+        for i in 0..<nums.count {
+            if let index = map[target - nums[i]] {
+                return [index, i]
+            }
+            map[nums[i]] = i
+        }
+        return [-1, -1]
+    }
+}
+
+/*
+ 167. 两数之和 II - 输入有序数组
+ */
+class 两数之和II {
+    func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+        var left = 0, right = nums.count - 1
+        while left < right {
+            if nums[left] + nums[right] < target {
+                left += 1
+            }else if nums[left] + nums[right] > target {
+                right -= 1
+            }else {
+                return [left, right]
+            }
+        }
+        return [-1, -1]
+    }
+}
+
+/*
+ 15. 三数之和
+ 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重复的三元组。
+ 
+ 注意：答案中不可以包含重复的三元组。
+ 
+ 
+ 
+ 示例 1：
+ 
+ 输入：nums = [-1,0,1,2,-1,-4]
+ 输出：[[-1,-1,2],[-1,0,1]]
+ 示例 2：
+ 
+ 输入：nums = []
+ 输出：[]
+ 示例 3：
+ 
+ 输入：nums = [0]
+ 输出：[]
+ 
+ 
+ 提示：
+ 
+ 0 <= nums.length <= 3000
+ -105 <= nums[i] <= 105
+ */
+class 三数之和15 {
+    func threeSum(_ nums: [Int]) -> [[Int]] {
+        var ans = [[Int]]()
+        let nums = nums.sorted()
+        var i = 0
+        while i < nums.count - 2 {
+            let item = nums[i]
+            let res = twoSum([Int](nums[i+1..<nums.count]), 0-nums[i])
+            for item in res {
+                var item = item
+                item.insert(nums[i], at: 0)
+                ans.append(item)
+            }
+            while i < nums.count - 1 && nums[i] == item {
+                i += 1
+            }
+        }
+        return ans
+    }
+    
+    func twoSum(_ nums: [Int], _ target: Int) -> [[Int]] {
+        var ans: [[Int]] = []
+        var left = 0, right = nums.count - 1
+        while left < right {
+            let leftValue = nums[left]
+            let rightValue = nums[right]
+            let sum = leftValue + rightValue
+            if sum < target {
+                left += 1
+            }else if sum > target {
+                right -= 1
+            }else {
+                ans.append([nums[left], nums[right]])
+                while left < right && nums[left] == leftValue {
+                    left += 1
+                }
+                while left < right && nums[right] == rightValue {
+                    right -= 1
+                }
+            }
+        }
+        return ans
+    }
+}
+
+//print(三数之和15().threeSum([-1,0,1,2,-1,-4]))
+
+class n数之和 {
+    func nSum(_ nums: [Int], _ n: Int, _ target: Int) -> [[Int]] {
+        let nums = nums.sorted()
+        return nSumHelper(nums, n, target)
+    }
+    func nSumHelper(_ nums: [Int], _ n: Int, _ target: Int) -> [[Int]] {
+        var ans: [[Int]] = []
+        if nums.count < 2 {
+            return ans
+        }
+        if n == 2 {
+            var lo = 0
+            var hi = nums.count-1
+            while lo < hi {
+                let leftValue = nums[lo]
+                let rightValue = nums[hi]
+                let sum = leftValue + rightValue
+                if sum > target {
+                    hi -= 1
+                }else if sum < target {
+                    lo += 1
+                }else {
+                    ans.append([leftValue, rightValue])
+                    while lo < hi && nums[lo] == leftValue {
+                        lo += 1
+                    }
+                    while lo < hi && nums[hi] == rightValue {
+                        hi -= 1
+                    }
+                }
+            }
+        }else {
+            var i = 0
+            while i < nums.count {
+                let item = nums[i]
+                let res = nSumHelper([Int](nums[i+1..<nums.count]), n-1, target-item)
+                for value in res {
+                    var value = value
+                    value.insert(item, at: 0)
+                    ans.append(value)
+                }
+                while i < nums.count && nums[i] == item {
+                    i += 1
+                }
+            }
+        }
+        return ans
+    }
+}
+
+//print(n数之和().nSum([-1,0,1,2,-1,-4], 3, 1))
+
+/*
+ 55. 跳跃游戏
+ 给定一个非负整数数组，你最初位于数组的第一个位置。
+
+ 数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+ 判断你是否能够到达最后一个位置。
+
+ 示例 1:
+
+ 输入: [2,3,1,1,4]
+ 输出: true
+ 解释: 我们可以先跳 1 步，从位置 0 到达 位置 1, 然后再从位置 1 跳 3 步到达最后一个位置。
+ 示例 2:
+
+ 输入: [3,2,1,0,4]
+ 输出: false
+ 解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+ */
+class 跳跃游戏55 {
+    func canJump(_ nums: [Int]) -> Bool {
+        var fastest = 0
+        for i in 0..<nums.count-1 {
+            fastest = max(fastest, i + nums[i])
+            if fastest <= i {
+                return false
+            }
+        }
+        if fastest < nums.count-1 {
+            return false
+        }
+        return true
+    }
+}
+
+/*
+ 45. 跳跃游戏 II
+ 给定一个非负整数数组，你最初位于数组的第一个位置。
+
+ 数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+ 你的目标是使用最少的跳跃次数到达数组的最后一个位置。
+
+ 示例:
+
+ 输入: [2,3,1,1,4]
+ 输出: 2
+ 解释: 跳到最后一个位置的最小跳跃数是 2。
+      从下标为 0 跳到下标为 1 的位置，跳 1 步，然后跳 3 步到达数组的最后一个位置。
+ 说明:
+
+ 假设你总是可以到达数组的最后一个位置。
+ */
+class 跳跃游戏45 {
+    func jump(_ nums: [Int]) -> Int {
+        var end = 0
+        var furthest = 0
+        var jump = 0
+        for i in 0..<nums.count-1 {
+            furthest = max(furthest, i + nums[i])
+            if end == i {
+                jump += 1
+                end = furthest
+            }
+        }
+        return jump
+    }
+    var mem: [Int : Int] = [:]
+    func jump1(_ nums: [Int]) -> Int {
+        return dp(nums, 0)
+    }
+    
+    func dp(_ nums: [Int], _ p: Int) -> Int {
+        if p >= nums.count-1 {
+            return 0
+        }
+        if let ans = mem[p] {
+            return ans
+        }
+        var res = nums.count
+        let size = nums[p]
+        for i in stride(from: 1, through: size, by: 1) {
+            let subProblem = dp(nums, p+i)
+            res = min(res, subProblem+1)
+        }
+        mem[p] = res
+        return res
+    }
+}
+print(跳跃游戏45().jump1([2,3,0,1,4]))

@@ -176,7 +176,7 @@ class 下一个更大元素III {
 }
 
 //print(下一个更大元素1().nextGreaterElement([2,4], [1,2,3,4]))
-print(下一个更大元素III().nextGreaterElement(12222333))
+//print(下一个更大元素III().nextGreaterElement(12222333))
 
 
 
@@ -205,3 +205,53 @@ class 每日温度739 {
     }
 }
 //print(每日温度739().dailyTemperatures([89,62,70,58,47,47,46,76,100,70]))
+
+/*
+ 84. 柱状图中最大的矩形
+ 给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+ 求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+  
+
+
+
+ 以上是柱状图的示例，其中每个柱子的宽度为 1，给定的高度为 [2,1,5,6,2,3]。
+
+  
+
+
+
+ 图中阴影部分为所能勾勒出的最大矩形面积，其面积为 10 个单位。
+
+  
+
+ 示例:
+
+ 输入: [2,1,5,6,2,3]
+ 输出: 10
+ */
+class 柱状图中最大的矩形84 {
+    func largestRectangleArea(_ heights: [Int]) -> Int {
+        let count = heights.count
+        var rMin: [Int] = Array.init(repeating: count, count: count)
+        var lMin: [Int] = Array.init(repeating: -1, count: count)
+        var stack: [Int] = []
+        for i in 0..<count {
+            while !stack.isEmpty && heights[i] < heights[stack.last!]{
+                let last = stack.removeLast()
+                rMin[last] = i
+            }
+            if !stack.isEmpty {
+                lMin[i] = stack.last!
+            }
+            stack.append(i)
+        }
+        var res = 0
+        for i in 0..<count {
+            res = max(res, heights[i]*(rMin[i]-lMin[i]-1))
+        }
+        return res
+    }
+}
+print(柱状图中最大的矩形84().largestRectangleArea([2,1,5,6,2,3]))

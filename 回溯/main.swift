@@ -251,18 +251,18 @@ class _78子集 {
 /*
  46. 全排列
  给定一个 没有重复 数字的序列，返回其所有可能的全排列。
-
+ 
  示例:
-
+ 
  输入: [1,2,3]
  输出:
  [
-   [1,2,3],
-   [1,3,2],
-   [2,1,3],
-   [2,3,1],
-   [3,1,2],
-   [3,2,1]
+ [1,2,3],
+ [1,3,2],
+ [2,1,3],
+ [2,3,1],
+ [3,1,2],
+ [3,2,1]
  ]
  */
 class 全排列46 {
@@ -290,22 +290,22 @@ class 全排列46 {
     
 }
 
-print(全排列46().permute([1,2,3]))
+//print(全排列46().permute([1,2,3]))
 /*
  77. 组合
  给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。
-
+ 
  示例:
-
+ 
  输入: n = 4, k = 2
  输出:
  [
-   [2,4],
-   [3,4],
-   [2,3],
-   [1,2],
-   [1,3],
-   [1,4],
+ [2,4],
+ [3,4],
+ [2,3],
+ [1,2],
+ [1,3],
+ [1,4],
  ]
  */
 class 组合77 {
@@ -332,9 +332,9 @@ class 组合77 {
 /*
  37. 解数独
  编写一个程序，通过填充空格来解决数独问题。
-
+ 
  一个数独的解法需遵循如下规则：
-
+ 
  数字 1-9 在每一行只能出现一次。
  数字 1-9 在每一列只能出现一次。
  数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
@@ -380,3 +380,89 @@ class 解数独37 {
         return true
     }
 }
+/*
+ 22. 括号生成
+ 数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+ */
+class 括号生成22 {
+    var ans: [String] = []
+    var perItem: [Character] = []
+    func generateParenthesis(_ n: Int) -> [String] {
+        helper(n, n, n)
+        return ans
+    }
+    
+    func helper(_ n: Int, _ left: Int, _ right: Int) {
+        if left < 0 || right < 0 {
+            return
+        }
+        if right < left {
+            return
+        }
+        if left == 0 && right == 0 {
+            ans.append(String(perItem))
+            return
+        }
+        perItem.append("(")
+        helper(n, left-1, right)
+        perItem.removeLast()
+        
+        perItem.append(")")
+        helper(n, left, right-1)
+        perItem.removeLast()
+    }
+}
+/*
+ 773. 滑动谜题
+ 在一个 2 x 3 的板上（board）有 5 块砖瓦，用数字 1~5 来表示, 以及一块空缺用 0 来表示.
+ 
+ 一次移动定义为选择 0 与一个相邻的数字（上下左右）进行交换.
+ 
+ 最终当板 board 的结果是 [[1,2,3],[4,5,0]] 谜板被解开。
+ 
+ 给出一个谜板的初始状态，返回最少可以通过多少次移动解开谜板，如果不能解开谜板，则返回 -1 。
+ 
+ */
+class 滑动谜题773 {
+    func slidingPuzzle(_ board: [[Int]]) -> Int {
+        var start: String = ""
+        for i in board {
+            for j in i {
+                start.append(Character.init(String(j)))
+            }
+        }
+        let end = "123450"
+        let neighbor: [[Int]] = [[1,3],[0,2,4],[1,5],[0,4],[1,3,5],[2,4]];
+        
+        var queue: [String] = []
+        var mem: [String:Int] = [:]
+        var step = 0
+        queue.append(start)
+        mem[start] = 1
+        while !queue.isEmpty {
+            let n = queue.count
+            for _ in 0..<n {
+                let str = queue.removeFirst()
+                if str == end {
+                    return step
+                }
+                let strC = [Character](str)
+                let pos0 = strC.firstIndex(of: "0")!
+                for i in neighbor[pos0] {
+                    var newStr = strC
+                    newStr.swapAt(i, pos0)
+                    let tmpStr = String(newStr)
+                    if mem[tmpStr] == nil {
+                        mem[tmpStr] = 1
+                        queue.append(tmpStr)
+                    }
+                }
+            }
+            step += 1
+        }
+        return -1
+    }
+    
+}
+
+print(滑动谜题773().slidingPuzzle([[1,2,3],[4,0,5]]))
